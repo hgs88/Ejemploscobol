@@ -1,0 +1,64 @@
+000010 IDENTIFICATION DIVISION.                                         00010000
+000020 PROGRAM-ID. DIASEM.                                              00020000
+000030 AUTHOR. J.GAYAN.                                                 00030000
+000040 ENVIRONMENT DIVISION.                                            00040000
+000050 CONFIGURATION SECTION.                                           00050000
+000060 SOURCE-COMPUTER. IBM-370.                                        00060000
+000070 OBJECT-COMPUTER. IBM-370.                                        00070000
+000080 SPECIAL-NAMES.                                                   00080001
+000120 INPUT-OUTPUT SECTION.                                            00120000
+000130 FILE-CONTROL.                                                    00130000
+000140 DATA DIVISION.                                                   00140000
+000150 FILE SECTION.                                                    00150000
+000160 WORKING-STORAGE SECTION.                                         00160000
+000170 01  TAB-DIAS.                                                    00170000
+000180     03 FILLER PIC X(9)  VALUE 'SABADO   '.                       00180000
+000190     03 FILLER PIC X(9)  VALUE 'DOMINGO  '.                       00190000
+000200     03 FILLER PIC X(9)  VALUE 'LUNES    '.                       00200000
+000210     03 FILLER PIC X(9)  VALUE 'MARTES   '.                       00210000
+000220     03 FILLER PIC X(9)  VALUE 'MIERCOLES'.                       00220000
+000230     03 FILLER PIC X(9)  VALUE 'JUEVES   '.                       00230000
+000240     03 FILLER PIC X(9)  VALUE 'VIERNES  '.                       00240000
+000250 01  FILLER REDEFINES TAB-DIAS.                                   00250000
+000260     03 DIA-LIT    PIC X(9) OCCURS 7 TIMES INDEXED BY I.          00260000
+000270 01  COMP-FEC  PIC 9(8).                                          00270000
+000280 01  CO-FE REDEFINES COMP-FEC.                                    00280000
+000290     03  A      PIC 9(4).                                         00290000
+000300     03  M      PIC 9(2).                                         00300000
+000310     03  D      PIC 9(2).                                         00310000
+000320 77  SWFEC     PIC 9 VALUE 0.                                     00320000
+000330 77  SWERROR   PIC 9 VALUE 0.                                     00330000
+000340 77  R   PIC 9(4) VALUE 0.                                        00340000
+000350 77  S   PIC 9(4) VALUE 0.                                        00350000
+000360 77  T   PIC 9(4) VALUE 0.                                        00360000
+000370 77  U   PIC 9(4) VALUE 0.                                        00370000
+000380 77  V   PIC 9(4) VALUE 0.                                        00380000
+000390 77  G   PIC 9(4) VALUE 0.                                        00390000
+000400 77  N   PIC 9(4) VALUE 0.                                        00400000
+000410 77  DS  PIC 9(4) VALUE 0.                                        00410000
+000420 PROCEDURE DIVISION.                                              00420000
+000430 ABRIR.                                                           00430000
+000440     DISPLAY 'ESTE PROGRAMA CALCULA EL DIA DE LA SEMANA'          00440000
+000500     ACCEPT COMP-FEC FROM SYSIN                                   00500003
+000510     EVALUATE TRUE                                                00510000
+000520         WHEN  COMP-FEC < 15821005  MOVE 1 TO SWFEC               00520000
+000530         WHEN  COMP-FEC > 15821014  MOVE 0 TO SWFEC               00530000
+000540         WHEN  OTHER  MOVE 1 TO SWERROR                           00540000
+000550     END-EVALUATE.                                                00550000
+000560     IF M = 1 OR = 2  ADD 12 TO M  SUBTRACT 1 FROM A.             00560000
+000570     IF SWERROR NOT = 1 PERFORM CALCULO  ELSE                     00570000
+000580        DISPLAY 'FECHA ESTA EN LOS LIMITES DE AJUSTE '            00580000
+000590                'PASO CALENDARIO JULIANO A GREGORIANO'.           00590000
+000600     STOP RUN.                                                    00600000
+000610 CALCULO.                                                         00610000
+000620     COMPUTE R = 3 * (M + 1 ) / 5.                                00620000
+000630     COMPUTE S = A / 4.                                           00630000
+000640     COMPUTE T = A / 100.                                         00640000
+000650     COMPUTE U = A / 400.                                         00650000
+000660     COMPUTE G = T - U - 2.                                       00660000
+000670     IF SWFEC = 1 MOVE 0 TO G.                                    00670000
+000680     COMPUTE N = D + ( 2 * M ) + R + A + S - G.                   00680000
+000700     COMPUTE V = N / 7.                                           00700000
+000710     COMPUTE DS = N - ( 7 * V ) + 1.                              00710000
+000720     DISPLAY DIA-LIT(DS).                                         00720000
+

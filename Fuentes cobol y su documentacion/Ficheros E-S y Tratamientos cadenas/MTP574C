@@ -1,0 +1,66 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. PRUEBA1.                                             00020010
+       AUTHOR. J.GAYAN.                                                 00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       CONFIGURATION SECTION.                                           00050000
+       SOURCE-COMPUTER. IBM-370.                                        00060000
+       OBJECT-COMPUTER. IBM-370.                                        00070000
+       SPECIAL-NAMES.                                                   00080000
+           DECIMAL-POINT IS COMMA.                                      00090000
+       INPUT-OUTPUT SECTION.                                            00100000
+       FILE-CONTROL.                                                    00110000
+           SELECT entrada ASSIGN TO entrada.                            00160000
+           SELECT salida  ASSIGN TO salida.                             00180000
+       DATA DIVISION.                                                   00190000
+       FILE SECTION.                                                    00200000
+       FD  ENTRADA                                                      00210000
+           BLOCK CONTAINS 0 RECORDS                                     00220000
+           LABEL RECORD IS STANDARD                                     00230000
+           RECORDING MODE IS F                                          00240000
+           RECORD 80 CHARACTERS                                         00250000
+           DATA RECORD IS REG-ENTRADA.
+       01 REG-ENTRADA.                                                  00260000
+           03 TOPES.
+              05    FILLER   PIC X(2).
+              05    MIEMBRO  PIC X(8).
+           03 FILLER  PIC X(70).
+       FD  SALIDA                                                       00440000
+           BLOCK CONTAINS 0 RECORDS                                     00450000
+           LABEL RECORD IS STANDARD                                     00460000
+           RECORDING MODE IS F                                          00470000
+           RECORD 132 CHARACTERS                                        00480000
+           DATA RECORD IS REG-SALIDA.                                   00490000
+       01  REG-SALIDA     PIC X(132).                                   00500000
+       WORKING-STORAGE SECTION.                                         00620000
+       01 ACEPTAR      PIC X(80).
+       77  FIC-PC      PIC X(80).                                       00971714
+       77  FIC-IBM     PIC X(80).                                       00971914
+       77  FICHERO     PIC X(80).                                       00971714
+       77 FE PIC X.
+       01  TEXTO.                                                       00971814
+           03  FILLER   PIC X(5) VALUE ' text'.                         00971814
+           03  FILLER  PIC X VALUE X'BD'.
+       PROCEDURE DIVISION.                                              01390017
+       ABRIR.                                                           01400017
+           OPEN INPUT ENTRADA                                           01410017
+           OPEN OUTPUT SALIDA.                                          01420017
+           PERFORM FICHEROS-ENTRADA-SALIDA                              01400017
+           READ ENTRADA AT END MOVE 1 TO FE END-READ
+           PERFORM UNTIL TOPES = 'READY     '
+              MOVE MIEMBRO TO FICHERO
+              MOVE SPACES TO REG-SALIDA
+              STRING FIC-PC  FICHERO DELIMITED BY ' '
+              TEXTO DELIMITED BY SIZE  FIC-IBM '( ' FICHERO ') '
+              DELIMITED BY ' ' INTO REG-SALIDA END-STRING
+              WRITE REG-SALIDA END-WRITE
+              READ ENTRADA AT END MOVE 1 TO FE END-READ
+           END-PERFORM
+           CLOSE ENTRADA SALIDA                                         02180017
+           STOP RUN.                                                    02190017
+       FICHEROS-ENTRADA-SALIDA.                                         01400017
+            ACCEPT ACEPTAR FROM SYSIN
+            UNSTRING ACEPTAR DELIMITED BY ' ' INTO FIC-PC FIC-IBM
+            PERFORM UNTIL TOPES = '--MEMBERS-'
+                READ ENTRADA AT END MOVE 1 TO FE END-READ
+            END-PERFORM.
+

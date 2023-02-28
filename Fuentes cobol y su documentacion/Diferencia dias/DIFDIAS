@@ -1,0 +1,55 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DIFDIAS.
+       AUTHOR. J.GAYAN.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       OBJECT-COMPUTER. IBM-370.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+       DATA DIVISION.
+       FILE SECTION.
+       WORKING-STORAGE SECTION.
+       01  FECHA.
+           03  A-M.
+             05  A     PIC 9(4).
+             05  M     PIC 9(2).
+           03  D     PIC 9(2).
+       77  TOT       PIC 9(3).
+       77  PAR       PIC 9(8).
+       77  TOR       PIC 9(8).
+       77  NUMDIAS   PIC 9(8).
+       77  DIAS-INF  PIC 9(8).
+       77  N         PIC 9(4).
+       77  T         PIC 9(4).
+       77  R         PIC 9(4).
+       77  U         PIC 9(4).
+       PROCEDURE DIVISION.
+       ABRIR.
+	          DISPLAY 'FECHA INF'
+           ACCEPT FECHA
+           PERFORM CUENTA-DIAS
+           ADD -1 TO NUMDIAS
+           MOVE NUMDIAS TO DIAS-INF
+           DISPLAY ' NUMDIAS 1 ' NUMDIAS
+           MOVE 0 TO TOT PAR TOR NUMDIAS N T R U
+	          DISPLAY 'FECHA SUP'
+           ACCEPT FECHA
+           PERFORM CUENTA-DIAS
+           SUBTRACT DIAS-INF FROM NUMDIAS
+           DISPLAY ' NUMDIAS 2 ' NUMDIAS
+           STOP RUN.
+       CUENTA-DIAS.
+           COMPUTE M = M - 1
+           COMPUTE TOT = D + 30.57 * M + 0.5
+           DIVIDE A BY 4 GIVING N REMAINDER T
+           IF M > 1
+             ADD -1 TO TOT
+             IF T NOT = 0  ADD -1 TO TOT END-IF
+           END-IF
+           COMPUTE A = A - 1900
+           DIVIDE A BY 4 GIVING U REMAINDER R
+           COMPUTE PAR = 1461 * U
+           IF T > 0 COMPUTE TOR = 366 * R - T + 1.
+           COMPUTE NUMDIAS = TOT + PAR + TOR.
+

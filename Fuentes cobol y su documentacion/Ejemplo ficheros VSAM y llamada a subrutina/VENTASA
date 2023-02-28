@@ -1,0 +1,119 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VENTAS.
+       AUTHOR. J.GAYAN.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       OBJECT-COMPUTER. IBM-370.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ENTRADA ASSIGN TO ENTRADA
+           ORGANIZATION IS INDEXED
+           ACCESS MODE IS SEQUENTIAL
+           RECORD KEY IS CLAVE.
+           SELECT SALIDA  ASSIGN TO SALIDA.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  ENTRADA
+           RECORD 28 CHARACTERS
+           DATA RECORD IS REG-ENTRADA.
+       01 REG-ENTRADA.
+           02 REG-ENT.
+              03 CLAVE PIC X(6).
+              03 FILLER PIC X(22).
+           02 TODO REDEFINES REG-ENT.
+             03 S-COD-VENTA PIC 9(6).
+             03 S-COD-VENDEDOR   PIC 9(4).
+             03 S-COD-PRODUCTO  PIC 9(4).
+             03 S-A    PIC 9(4).
+             03 S-M    PIC 99.
+             03 S-D    PIC 99.
+             03 S-KILOS       PIC 9(4)V99.
+       FD  SALIDA
+           BLOCK CONTAINS 0 RECORDS
+           LABEL RECORD IS STANDARD
+           RECORDING MODE IS F
+           RECORD 132 CHARACTERS
+           DATA RECORD IS REG-SALIDA.
+       01  REG-SALIDA PIC X(132).
+       WORKING-STORAGE SECTION.
+       77  FE PIC X.
+       77  F-SUP PIC 9(4) VALUE 1999.
+       77  F-INF PIC 9(4) VALUE 1998.
+       77  VENDEDOR PIC X(2).
+       77  ANO PIC XXXX.
+       77  SUMA  PIC 9(4)V99 VALUE 0,00.
+       77  SUMA2 REDEFINES SUMA PIC ZZZ9.99.
+       01  CABECERA1.
+           03 FILLER PIC X(5)   VALUE 'C-VTA'.
+           03 FILLER         PIC XX VALUE SPACES.
+           03 FILLER PIC X(5)   VALUE 'C-VDO'.
+           03 FILLER         PIC XX VALUE SPACES.
+           03 FILLER PIC X(5)  VALUE 'C-PRO'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(10)   VALUE 'FECH-VENTA'.
+           03 FILLER         PIC X(1) VALUE SPACES.
+           03 FILLER PIC X(7)   VALUE ' KILOS '.
+       01  CABECERA2.
+           03 FILLER PIC X(5)   VALUE ALL '-'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(5)   VALUE ALL '-'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(5)  VALUE ALL '-'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(10)   VALUE ALL '-'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)   VALUE ALL '-'.
+       01  CABECERA3.
+           03 S-COD-VENTA2    PIC ZZZ9.
+           03 FILLER         PIC X(3) VALUE SPACES.
+           03 S-COD-VENDEDOR2   PIC ZZZ9.
+           03 FILLER         PIC X(5)  VALUE SPACES.
+           03 S-COD-PRODUCTO2   PIC Z9.
+           03 FILLER         PIC X(3) VALUE SPACES.
+           03 S-A2              PIC ZZZ9.
+           03 FILLER         PIC X VALUE SPACES.
+           03 S-M2               PIC Z9.
+           03 FILLER         PIC X  VALUE SPACES.
+           03 S-D2               PIC Z9.
+           03 FILLER         PIC XX  VALUE SPACES.
+           03 S-KILOS2       PIC ZZZ9.99.
+        01  CABECERA4.
+            03 FILLER         PIC X(33) VALUE SPACES.
+            03 TOTAL        PIC ZZZ9.99.
+        01  ARGUMENTOS.
+             02 CLAVE1 PIC Z9.
+             02 S-COD2 PIC X(20).
+        01 GRUPO0  PIC X(6) VALUE 'GRUPO0'.
+       PROCEDURE DIVISION.
+       ABRIR.
+           OPEN INPUT ENTRADA
+           OPEN OUTPUT SALIDA
+           WRITE REG-SALIDA FROM CABECERA1 END-WRITE
+           WRITE REG-SALIDA FROM CABECERA2 END-WRITE
+           READ ENTRADA AT END MOVE 1 TO FE END-READ
+           PERFORM  UNTIL FE = 1
+           MOVE S-A TO S-A2
+           IF S-COD-VENDEDOR = 1 THEN
+            IF S-A = F-INF THEN
+               CALL GRUPO0 USING ARGUMENTOS
+      *        MOVE CORR TODO TO CABECERA3
+               MOVE S-COD-VENDEDOR TO S-COD-VENDEDOR2
+               MOVE S-COD-VENTA TO S-COD-VENTA2
+               MOVE S-COD-PRODUCTO TO S-COD-PRODUCTO2
+               MOVE S-M TO S-M2
+               MOVE S-D TO S-D2
+               MOVE S-KILOS TO S-KILOS2
+               COMPUTE SUMA = SUMA + S-KILOS
+              WRITE REG-SALIDA FROM CABECERA3 END-WRITE
+              END-IF
+               END-IF
+               READ ENTRADA AT END MOVE 1 TO FE END-READ
+           END-PERFORM
+           MOVE SUMA2 TO TOTAL
+           WRITE REG-SALIDA FROM CABECERA2 END-WRITE
+           WRITE REG-SALIDA FROM CABECERA4 END-WRITE
+           CLOSE ENTRADA SALIDA
+           STOP RUN.

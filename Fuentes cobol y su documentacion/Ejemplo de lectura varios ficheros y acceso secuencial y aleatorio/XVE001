@@ -1,0 +1,193 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. VENTAS1.
+       AUTHOR. J.GAYAN.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-370.
+       OBJECT-COMPUTER. IBM-370.
+       SPECIAL-NAMES.
+           DECIMAL-POINT IS COMMA.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ENTRADA ASSIGN TO ENTRADA.
+           SELECT SALIDA  ASSIGN TO SALIDA.
+           SELECT FPRODUC ASSIGN TO FPRODUC
+           ORGANIZATION IS INDEXED
+           ACCESS MODE IS SEQUENTIAL
+           RECORD KEY IS FPRODUC-CLAVE.
+           SELECT FVENDED ASSIGN TO FVENDED
+           ORGANIZATION IS INDEXED
+           ACCESS MODE IS RANDOM
+           RECORD KEY IS FVENDED-CLAVE.
+       DATA DIVISION.
+       FILE SECTION.
+       FD  ENTRADA
+           BLOCK CONTAINS 0 RECORDS
+           LABEL RECORD IS STANDARD
+           RECORDING MODE IS F
+           RECORD 28 CHARACTERS
+           DATA RECORD IS REG-ENTRADA.
+       01 REG-ENTRADA.
+           02 REG-ENT.
+              03 CLAVE PIC X(6).
+              03 FILLER PIC X(22).
+           02 TODO REDEFINES REG-ENT.
+             03 S-COD-VENTA PIC 9(6).
+             03 S-COD-VENDEDOR   PIC 9(4).
+             03 S-COD-PRODUCTO  PIC 9(4).
+             03 S-A    PIC 9(4).
+             03 S-M    PIC 99.
+             03 S-D    PIC 99.
+             03 S-KILOS       PIC 9(4)V99.
+       FD  SALIDA
+           BLOCK CONTAINS 0 RECORDS
+           LABEL RECORD IS STANDARD
+           RECORDING MODE IS F
+           RECORD 132 CHARACTERS
+           DATA RECORD IS REG-SALIDA.
+       01  REG-SALIDA PIC X(132).
+       FD  FVENDED
+           RECORD 153 CHARACTERS
+           DATA RECORD IS REG-FVENDED.
+       01 REG-FVENDED.
+           02 REG-ENT.
+              03 FVENDED-CLAVE PIC X(4).
+              03 FILLER PIC X(149).
+           02 TODO REDEFINES REG-ENT.
+             03 FVENDED-COD-VENDEDOR PIC 9(4).
+             03 FVENDED-NOMBRE PIC X(30).
+             03 FVENDED-FECHA-ALTA.
+                 05 FVENDED-A-A PIC X(4).
+                 05 FVENDED-M-A PIC XX.
+                 05 FVENDED-D-A PIC XX.
+             03 FVENDED-NIF    PIC X(10).
+             03 FVENDED-FECHA-NACIMIENTO.
+                 05 FVENDED-A-N PIC X(4).
+                 05 FVENDED-M-N PIC XX.
+                 05 FVENDED-D-N PIC XX.
+             03 FVENDED-DIRECION PIC X(30).
+             03 FVENDED-POBLACION PIC X(30).
+             03 FVENDED-COD-POSTAL PIC X(10).
+             03 FVENDED-TELEFONO PIC X(10).
+             03 FVENDED-ESTADO PIC X(12).
+             03 FVENDED-GUAPO  PIC X.
+       FD  FPRODUC
+           RECORD 30 CHARACTERS
+           DATA RECORD IS REG-FPRODUC.
+       01 REG-FPRODUC.
+             02 NADA.
+               03 FPRODUC-CLAVE PIC X(4).
+               03 FILLER PIC X(26).
+             02 TODO REDEFINES NADA.
+                03 S-IDPRODUCTO   PIC 9(4).
+                03 S-NOMPRODUCTO  PIC X(20).
+                03 S-IDGRUPO      PIC 99.
+                03 S-PRECIO       PIC 9(2)V99.
+       WORKING-STORAGE SECTION.
+       77  FE PIC X.
+       77  A  PIC 99.
+       77  B  PIC 99.
+       77  W-COD-VENDEDOR  PIC 9(4).
+       01  FILLER.
+           02 TAB-PRODUCTOS OCCURS 25.
+              03 TAB-PRODUCTO-DESCRIPCION   PIC X(20).
+              03 TAB-PRECIO                 PIC 99V99.
+              03 TAB-GRUPO                  PIC 99.
+              03 TAB-KILOS    PIC 9(4)V99 OCCURS 12.
+       01  CABECERA1.
+           03 FILLER PIC X(11)   VALUE 'VENDEDOR   '.
+           03 CAB-COD-VENDEDOR   PIC ZZZ9.
+           03 FILLER         PIC XX VALUE SPACES.
+           03 CAB-NOM-VENDEDOR   PIC X(30).
+       01  CABECERA2.
+           03 FILLER PIC X(4)   VALUE ALL 'COD.'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(20)   VALUE ALL '   PRODUCTO  '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'ENERO'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'FEBRERO'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'MARZO  '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'ABRIL  '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'MAYO   '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'JUNIO  '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'JULIO  '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'AGOSTO '.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'SEPTIEM'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'OCTUBRE'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'NOVIEMB'.
+           03 FILLER         PIC X(2) VALUE SPACES.
+           03 FILLER PIC X(7)  VALUE ALL 'DICIEMB'.
+       01  CABECERA3.
+           03 CAB-COD-PRODUCTO   PIC ZZZ9.
+           03 FILLER         PIC X(3) VALUE SPACES.
+           03 CAB-NOM-PRODUCTO   PIC X(20).
+           03 CAB-KILOS      PIC ZZZ9,99 OCCURS 12.
+       PROCEDURE DIVISION.
+       ABRIR.
+           PERFORM  LLENAR-TABLA-PRODUCTOS.
+           PERFORM  INICIAR-TABLA-PRODUCTOS.
+           OPEN INPUT ENTRADA FVENDED
+           OPEN OUTPUT SALIDA
+           MOVE 0 TO FE
+           READ ENTRADA AT END MOVE 1 TO FE END-READ
+           PERFORM  UNTIL FE = 1
+              MOVE S-COD-VENDEDOR TO W-COD-VENDEDOR
+              PERFORM  UNTIL S-COD-VENDEDOR NOT = W-COD-VENDEDOR OR
+                       FE = 1
+                 ADD  S-KILOS TO TAB-KILOS(S-COD-PRODUCTO  S-M)
+                 READ ENTRADA AT END MOVE 1 TO FE END-READ
+              END-PERFORM
+              PERFORM IMPRIMIR-CABECERA
+              PERFORM IMPRIMIR-DETALLE
+           END-PERFORM
+           CLOSE ENTRADA SALIDA FVENDED
+           STOP RUN.
+       LLENAR-TABLA-PRODUCTOS.
+           OPEN INPUT FPRODUC
+           MOVE 0 TO FE
+           READ FPRODUC AT END MOVE 1 TO FE END-READ
+           MOVE 1 TO A
+           PERFORM  UNTIL FE = 1
+               MOVE S-NOMPRODUCTO TO TAB-PRODUCTO-DESCRIPCION(A)
+               MOVE S-IDGRUPO     TO TAB-GRUPO(A)
+               MOVE S-PRECIO      TO TAB-PRECIO(A)
+               ADD 1 TO A
+               READ FPRODUC AT END MOVE 1 TO FE END-READ
+           END-PERFORM
+           CLOSE FPRODUC.
+       INICIAR-TABLA-PRODUCTOS.
+           PERFORM  VARYING A FROM 1 BY 1 UNTIL A > 25
+             PERFORM  VARYING B FROM 1 BY 1 UNTIL B > 12
+               MOVE 0 TO TAB-KILOS(A B)
+             END-PERFORM
+           END-PERFORM.
+       IMPRIMIR-CABECERA.
+           MOVE W-COD-VENDEDOR TO FVENDED-CLAVE
+           READ FVENDED  KEY IS FVENDED-CLAVE
+                 INVALID KEY    DISPLAY 'ERROR FVENDED'
+           END-READ
+           MOVE FVENDED-COD-VENDEDOR TO CAB-COD-VENDEDOR
+           MOVE FVENDED-NOMBRE       TO CAB-NOM-VENDEDOR
+           WRITE REG-SALIDA FROM CABECERA1 END-WRITE
+           WRITE REG-SALIDA FROM CABECERA2 END-WRITE.
+       IMPRIMIR-DETALLE.
+           PERFORM  VARYING A FROM 1 BY 1 UNTIL A > 25
+             IF TAB-PRODUCTO-DESCRIPCION(A) > SPACES
+               MOVE TAB-PRODUCTO-DESCRIPCION(A) TO CAB-NOM-PRODUCTO
+               MOVE A  TO CAB-COD-PRODUCTO
+               PERFORM  VARYING B FROM 1 BY 1 UNTIL B > 12
+                  MOVE  TAB-KILOS(A B)  TO CAB-KILOS(B)
+               END-PERFORM
+              WRITE REG-SALIDA FROM CABECERA3 END-WRITE
+              END-IF
+           END-PERFORM.

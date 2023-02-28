@@ -1,0 +1,204 @@
+       IDENTIFICATION DIVISION.                                         00010000
+       PROGRAM-ID. PRUEBA1.                                             00020010
+       AUTHOR. J.GAYAN.                                                 00030000
+       ENVIRONMENT DIVISION.                                            00040000
+       CONFIGURATION SECTION.                                           00050000
+       SOURCE-COMPUTER. IBM-370.                                        00060000
+       OBJECT-COMPUTER. IBM-370.                                        00070000
+       SPECIAL-NAMES.                                                   00080000
+           DECIMAL-POINT IS COMMA.                                      00090000
+       INPUT-OUTPUT SECTION.                                            00100000
+       FILE-CONTROL.                                                    00110000
+           SELECT entrada ASSIGN TO entrada.                            00160000
+           SELECT salida  ASSIGN TO salida.                             00180000
+       DATA DIVISION.                                                   00190000
+       FILE SECTION.                                                    00200000
+       FD  ENTRADA                                                      00210000
+           BLOCK CONTAINS 0 RECORDS                                     00220000
+           LABEL RECORD IS STANDARD                                     00230000
+           RECORDING MODE IS F                                          00240000
+           RECORD 20 CHARACTERS                                         00250000
+           DATA RECORD IS REG-ENTRADA.
+       01 REG-ENTRADA.                                                  00260000
+           03 CODIGO      PIC 9(4).                                     00280000
+           03 NOMBRE      PIC X(6).                                     00290000
+           03 CURSO       PIC 9.                                        00291018
+           03 EDAD        PIC 99.                                       00300018
+           03 ORIGEN      PIC X(6).
+           03 NOTAS       PIC 9.                                        00310000
+       FD  SALIDA                                                       00440000
+           BLOCK CONTAINS 0 RECORDS                                     00450000
+           LABEL RECORD IS STANDARD                                     00460000
+           RECORDING MODE IS F                                          00470000
+           RECORD 132 CHARACTERS                                        00480000
+           DATA RECORD IS REG-SALIDA.                                   00490000
+       01  REG-SALIDA     PIC X(132).                                   00500000
+       WORKING-STORAGE SECTION.                                         00620000
+       01  WFECHA.                                                      00630000
+           03 W-DD  PIC XX.                                             00640000
+           03 W-MM  PIC XX.                                             00650000
+           03 W-AA  PIC X(4).                                           00660000
+       01  FILLER REDEFINES WFECHA.                                     00670000
+           03 D-AA  PIC XX.                                             00680000
+           03 D-MM  PIC XX.                                             00690000
+           03 D-DD  PIC XX.                                             00700000
+       01 LINEA-SALIDA.                                                 00260000
+           03 CODIGO-SAL  PIC 9(4).                                     00280000
+           03 FILLER     PIC X(2) VALUE SPACES.                         00846014
+           03 NOMBRE-SAL  PIC X(6).                                     00290000
+           03 FILLER     PIC X(2) VALUE SPACES.                         00846014
+           03 CURSO-SAL   PIC 9.                                        00291018
+           03 FILLER     PIC X(2) VALUE SPACES.                         00846014
+           03 EDAD-SAL    PIC 99.                                       00300018
+           03 FILLER     PIC X(2) VALUE SPACES.                         00846014
+           03 ORIGEN-SAL  PIC X(6).
+           03 FILLER     PIC X(2) VALUE SPACES.                         00846014
+           03 NOTAS-SAL   PIC 9.                                        00310000
+       01  CABECERA1.                                                   00710000
+           03 FILLER PIC X(6)   VALUE 'CODIGO'.                         00720000
+           03 FILLER PIC X(10)  VALUE '  NOMBRE '.                      00730000
+           03 FILLER PIC X(8)   VALUE ' CURSO '.                        00740000
+           03 FILLER PIC X(6)   VALUE ' EDAD '.                         00750000
+           03 FILLER PIC X(10)  VALUE '  ORIGEN  '.                     00760000
+           03 FILLER PIC X(5)   VALUE  'NOTAS'.                         00770000
+       01  CABECERA2.                                                   00710000
+           03 FILLER PIC X(6)   VALUE '======'.                         00720000
+           03 FILLER PIC X(10)  VALUE '========='.                      00730000
+           03 FILLER PIC X(8)   VALUE '======='.                        00740000
+           03 FILLER PIC X(6)   VALUE '======'.                         00750000
+           03 FILLER PIC X(10)  VALUE '=========='.                     00760000
+           03 FILLER PIC X(5)   VALUE  '====='.                         00770000
+                                                                        00840411
+       01  CABECERA3.                                                   00843014
+           03 FILLER     PIC X(9) VALUE SPACES.                         00844014
+           03 S-BORRAR   PIC X(9) VALUE 'DESTINO.-'.                    00845014
+           03 FILLER     PIC X(2) VALUE SPACES.                         00846014
+           03 S-CO       PIC X(4).                                      00847014
+           03 FILLER     PIC X(2) VALUE SPACES.                         00848014
+           03 S-DES-CO   PIC X(30)  VALUE SPACES.                       00849014
+           03 FILLER PIC X(28) VALUE 'PERIODO SELECCIONADO DESDE '.     00850014
+           03 SDDD   PIC X(2).                                          00860014
+           03 FILLER PIC X      VALUE '-'.                              00870014
+           03 SDMM   PIC X(2).                                          00880014
+           03 FILLER PIC X      VALUE '-'.                              00890014
+           03 SDAA   PIC X(4).                                          00900014
+           03 FILLER PIC X(9) VALUE '  HASTA '.                         00910014
+           03 SHDD   PIC X(2).                                          00920014
+           03 FILLER PIC X      VALUE '-'.                              00930014
+           03 SHMM   PIC X(2).                                          00940014
+           03 FILLER PIC X      VALUE '-'.                              00950014
+           03 SHAA   PIC X(4).                                          00960014
+           03 FILLER PIC X(16) VALUE '  TIPO DE GASTO '.                00970014
+           03 SSTG   PIC X.                                             00970114
+       01  CABECERA4.                                                   00971014
+           03  L15         PIC X(33) VALUE '         RESPONSABLE'.      00971114
+           03  FILLER      PIC X(3).                                    00971214
+           03  FILLER      OCCURS 12.                                   00971314
+              05 FILLER    PIC X.                                       00971414
+              05 S-XX      PIC X(7).                                    00971514
+       01  CABECERA5.                                                   00971614
+           03  L25         PIC X(33) VALUE ALL '-'.                     00971714
+           03  FILLER      PIC X(3).                                    00971814
+           03  S-RR        PIC X(8) OCCURS 12.                          00971914
+       01  REG-SALIDA11.                                                00972014
+           03  LI-LI.                                                   00972114
+               05  WSC     PIC X.                                       00972214
+               05  FILLER  PIC XX.                                      00972314
+               05  DESCRIPCION PIC X(30).                               00972414
+           03  FILLER REDEFINES LI-LI.                                  00972514
+               05  S-TO-CO  PIC X(4).                                   00972614
+               05  FILLER   PIC X.                                      00972714
+               05  S-DESCRIPCION PIC X(28).                             00972814
+           03  FILLER  PIC X(3).                                        00972914
+           03  FILLER OCCURS 12.                                        00973014
+               05  FILLER   PIC X.                                      00974014
+               05  S-SS     PIC X(7).                                   00975014
+           03  FILLER   PIC X(4).                                       00976014
+       77  EE       PIC X(7) VALUE SPACES.                              00977014
+       77  OO       PIC X    VALUE SPACES.                              00978018
+       77  FF       PIC 9    VALUE 0.                                   00978118
+       77  FE       PIC 9    VALUE 0.                                   00979014
+       01  W-CO-SC-XX.                                                  00980014
+              03 W-CO-SC.                                               00990014
+                05 W-CO   PIC X(4).                                     01000014
+                05 W-SC   PIC X.                                        01010014
+              03 W-XX     PIC 99.                                       01020014
+       77  A   PIC 99 VALUE 0.                                          01030014
+       77  Z   PIC 99 VALUE 0.                                          01040014
+       77  C   PIC 99 VALUE 0.                                          01050014
+       77  B   PIC 99 VALUE 0.                                          01060014
+       77  W-CON   PIC 9(4) COMP VALUE 0.                               01070014
+       77  NUM-FIN   PIC 99 VALUE 0.                                    01080014
+       77  TRANS    PIC ---.--9.                                        01090014
+       77  VUVU     PIC X(7) JUST RIGHT.                                01100014
+       01  TIEMPO.                                                      01110014
+           03 H-O   PIC 99.                                             01120014
+           03 M-I   PIC 99.                                             01130014
+           03 S-E   PIC 99.                                             01140014
+       01  FILLER.                                                      01160014
+           03 PARCIAL PIC 9(8) COMP OCCURS 12.                          01170014
+           03 TOTAL   PIC 9(8) COMP OCCURS 12.                          01180014
+           03 NUM-XX    PIC 99.                                         01190014
+       01  FILLER.                                                      01200014
+           03 NUM-SC    PIC 99 VALUE 1.                                 01210014
+           03 NUM-CO    PIC 99 VALUE 0.                                 01220014
+           03 FANTASMA.                                                 01230017
+             05 F-SC      PIC X OCCURS 35.                              01240017
+           03 TATA.                                                     01250017
+             05 T-SC      PIC X OCCURS 35.                              01260017
+           03 FILLER OCCURS 35.                                         01270017
+             05 T-DES-SC PIC X(30).                                     01270117
+           03  FILLER OCCURS 35.                                        01270517
+               05  NN  PIC 9(8) COMP OCCURS 12.                         01270617
+           03  FILLER OCCURS 35.                                        01270717
+               05  TT  PIC 9(8) COMP OCCURS 12.                         01270817
+           03  FILLER OCCURS 15.                                        01270917
+               05  C-DD PIC X(4).                                       01271017
+               05  Y-DD PIC X(28).                                      01272017
+               05  DD  PIC 9(8) COMP OCCURS 12.                         01273017
+       01  P-CORTES.                                                    01274017
+           03 P-CC  PIC 99.                                             01275017
+           03 P-XX  PIC 9(4) OCCURS 11.                                 01276017
+           03 FILLER PIC X(33).                                         01277017
+       01  P-UNO.                                                       01278017
+           03  P-DESTINO   PIC X(4).                                    01279017
+           03  PDDD        PIC 99.                                      01280017
+           03  PDMM        PIC 99.                                      01290017
+           03  PDAA        PIC 9(4).                                    01300017
+           03  PHDD        PIC 99.                                      01310017
+           03  PHMM        PIC 99.                                      01320017
+           03  PHAA        PIC 9(4).                                    01330017
+           03  TTGG        PIC X.                                       01340017
+       LINKAGE SECTION.                                                 01350017
+       01  PAS-PARM.                                                    01360017
+           03 LARGO PIC 9(4) COMP.                                      01370017
+           03 PP-NT  PIC X.                                             01380017
+       PROCEDURE DIVISION USING PAS-PARM.                               01390017
+       ABRIR.                                                           01400017
+           OPEN INPUT ENTRADA                                           01410017
+           OPEN OUTPUT SALIDA.                                          01420017
+           READ ENTRADA AT END MOVE 1 TO FE END-READ
+           PERFORM CABECERA
+           PERFORM  UNTIL FE = 1
+               MOVE REG-ENTRADA TO REG-SALIDA
+               MOVE CODIGO TO CODIGO-SAL
+               MOVE NOMBRE TO NOMBRE-SAL
+               MOVE CURSO TO CURSO-SAL
+               MOVE EDAD TO EDAD-SAL
+               MOVE ORIGEN TO ORIGEN-SAL
+               MOVE NOTAS TO NOTAS-SAL
+               MOVE LINEA-SALIDA TO REG-SALIDA
+               WRITE REG-SALIDA END-WRITE
+               READ ENTRADA AT END MOVE 1 TO FE END-READ
+           END-PERFORM                                                  02170017
+           CLOSE ENTRADA SALIDA                                         02180017
+           STOP RUN.                                                    02190017
+       CABECERA.
+           MOVE CABECERA1 TO REG-SALIDA
+           WRITE REG-SALIDA END-WRITE
+           MOVE CABECERA2 TO REG-SALIDA
+           WRITE REG-SALIDA END-WRITE.
+                                                                        02200017
+
+
+
